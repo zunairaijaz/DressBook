@@ -1,0 +1,31 @@
+{
+  "name": "the-dress-book---modern-clothing-store",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.16.3",
+    "@tailwindcss/aspect-ratio": "^0.4.2",
+    "bcryptjs": "^3.0.2",
+    "buffer": "^6.0.3",
+    "cookie": "^1.0.2",
+    "jsonwebtoken": "^9.0.2",
+    "next": "^15.5.4",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "react-router-dom": "^7.9.3",
+    "tailwindcss": "^4.1.13"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0",
+    "@vitejs/plugin-react": "^5.0.0",
+    "prisma": "^6.16.3",
+    "typescript": "~5.8.2",
+    "vite": "^6.2.0"
+  }
+}
