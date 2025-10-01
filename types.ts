@@ -1,6 +1,5 @@
-
 export interface Review {
-  id: number;
+  id: string; // FIX: Changed to string
   author: string;
   rating: number;
   comment: string;
@@ -16,7 +15,7 @@ export interface Variant {
 }
 
 export interface Product {
-  id: number;
+  id: string; // FIX: Changed to string
   name: string; // Product Name
   price: number; // Current price
   originalPrice?: number; // Optional original price for showing discounts

@@ -2,7 +2,8 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useCart } from '../hooks/useCart';
 import { useAuth } from '../hooks/useAuth';
 import LogoIcon from './icons/LogoIcon';
@@ -15,7 +16,7 @@ const Navbar: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isAccountMenuOpen, setAccountMenuOpen] = useState(false);
   const accountMenuRef = useRef<HTMLDivElement>(null);
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const handleClickOutside = (event: MouseEvent) => {
     if (accountMenuRef.current && !accountMenuRef.current.contains(event.target as Node)) {
@@ -33,11 +34,11 @@ const Navbar: React.FC = () => {
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
       setSearchQuery('');
     }
   };
-  
+
   const handleLogout = () => {
     logout();
     setAccountMenuOpen(false);
@@ -48,25 +49,25 @@ const Navbar: React.FC = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
-            <Link to="/" className="flex items-center gap-2 text-xl font-bold text-white">
+            <Link href="/" className="flex items-center gap-2 text-xl font-bold text-white">
               <LogoIcon className="h-8 w-8 text-accent" />
               <span className="hidden sm:inline">The Dress Book</span>
             </Link>
           </div>
-          
+
           <div className="flex-1 px-4 lg:px-12">
             <div className="relative">
               <form onSubmit={handleSearchSubmit} className="relative">
-                <input 
+                <input
                   type="text"
                   placeholder="Search The Dress Book"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-accent/80 text-primary"
                 />
-                 <button type="submit" className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" aria-label="Search">
-                    <SearchIcon />
-                 </button>
+                <button type="submit" className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" aria-label="Search">
+                  <SearchIcon />
+                </button>
               </form>
             </div>
           </div>
@@ -87,24 +88,24 @@ const Navbar: React.FC = () => {
                       <button onClick={handleLogout} className="w-full text-center bg-accent text-primary font-semibold py-1.5 rounded-md hover:bg-accent-hover text-sm">Sign Out</button>
                     ) : (
                       <>
-                        <Link to="/login" onClick={() => setAccountMenuOpen(false)} className="block w-full text-center bg-accent text-primary font-semibold py-1.5 rounded-md hover:bg-accent-hover text-sm">Sign in</Link>
-                        <p className="text-xs text-center mt-2">New customer? <Link to="/signup" onClick={() => setAccountMenuOpen(false)} className="text-blue-600 hover:underline">Start here.</Link></p>
+                        <Link href="/login" onClick={() => setAccountMenuOpen(false)} className="block w-full text-center bg-accent text-primary font-semibold py-1.5 rounded-md hover:bg-accent-hover text-sm">Sign in</Link>
+                        <p className="text-xs text-center mt-2">New customer? <Link href="/signup" onClick={() => setAccountMenuOpen(false)} className="text-blue-600 hover:underline">Start here.</Link></p>
                       </>
                     )}
                   </div>
                   <div className="py-2">
-                     <h3 className="font-bold px-4 text-md">Your Account</h3>
-                      <Link to="/account" onClick={() => setAccountMenuOpen(false)} className="block px-4 py-2 text-sm hover:bg-gray-100">Your Account</Link>
-                      <Link to="/wishlist" onClick={() => setAccountMenuOpen(false)} className="block px-4 py-2 text-sm hover:bg-gray-100">Your Wishlist</Link>
-                      {user?.role === 'admin' && (
-                        <Link to="/admin" onClick={() => setAccountMenuOpen(false)} className="block px-4 py-2 text-sm font-bold text-accent hover:bg-gray-100">Admin Dashboard</Link>
-                      )}
+                    <h3 className="font-bold px-4 text-md">Your Account</h3>
+                    <Link href="/account" onClick={() => setAccountMenuOpen(false)} className="block px-4 py-2 text-sm hover:bg-gray-100">Your Account</Link>
+                    <Link href="/wishlist" onClick={() => setAccountMenuOpen(false)} className="block px-4 py-2 text-sm hover:bg-gray-100">Your Wishlist</Link>
+                    {user?.role === 'admin' && (
+                      <Link href="/admin" onClick={() => setAccountMenuOpen(false)} className="block px-4 py-2 text-sm font-bold text-accent hover:bg-gray-100">Admin Dashboard</Link>
+                    )}
                   </div>
                 </div>
               )}
             </div>
-            
-            <Link to="/cart" className="relative text-white hover:text-gray-200 flex items-end gap-1 p-2 border border-transparent hover:border-white rounded">
+
+            <Link href="/cart" className="relative text-white hover:text-gray-200 flex items-end gap-1 p-2 border border-transparent hover:border-white rounded">
               <div className="relative">
                 <ShoppingCartIcon className="h-8 w-8" />
                 <span className="absolute -top-1 left-3.5 font-bold text-accent text-md">{cartCount}</span>

@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Product } from '../types';
 import { useCart } from '../hooks/useCart';
 import XMarkIcon from './icons/XMarkIcon';
@@ -19,6 +20,7 @@ const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose }) => 
   const [isAdding, setIsAdding] = useState(false);
   const { addItem } = useCart();
   const [isVisible, setIsVisible] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     if (product) {
@@ -36,8 +38,8 @@ const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose }) => 
     }
 
     return () => {
-        document.body.style.overflow = 'auto';
-    }
+      document.body.style.overflow = 'auto';
+    };
   }, [product]);
 
   const handleClose = useCallback(() => {
@@ -56,7 +58,7 @@ const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose }) => 
       document.removeEventListener('keydown', handleKeyDown);
     };
   }, [handleClose]);
-  
+
   const handleVariantChange = (type: string, value: string) => {
     setSelectedVariants(prev => ({ ...prev, [type]: value }));
   };
@@ -80,9 +82,7 @@ const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose }) => 
     }
   };
 
-  if (!product) {
-    return null;
-  }
+  if (!product) return null;
 
   return (
     <div
@@ -92,7 +92,7 @@ const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose }) => 
       aria-modal="true"
     >
       <div className="fixed inset-0 bg-black bg-opacity-50" onClick={handleClose} />
-      
+
       <div className={`relative bg-white w-full max-w-4xl m-4 rounded-lg shadow-xl transform transition-transform duration-300 ${isVisible ? 'scale-100' : 'scale-95'}`}>
         <button
           onClick={handleClose}
@@ -114,17 +114,17 @@ const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose }) => 
 
             <div className="flex flex-col">
               <h2 id="modal-title" className="text-2xl font-bold text-gray-900">{product.name}</h2>
-              
+
               <div className="mt-2 flex items-center">
                 <div className="flex items-center">
-                    {[...Array(5)].map((_, i) => (
+                  {[...Array(5)].map((_, i) => (
                     <StarIcon
-                        key={i}
-                        className={`h-5 w-5 flex-shrink-0 ${product.rating > i ? 'text-yellow-400' : 'text-gray-300'}`}
+                      key={i}
+                      className={`h-5 w-5 flex-shrink-0 ${product.rating > i ? 'text-yellow-400' : 'text-gray-300'}`}
                     />
-                    ))}
+                  ))}
                 </div>
-                <span className="ml-2 text-sm text-gray-500">{product.reviews.length} reviews</span>
+                <span className="ml-2 text-sm text-gray-500">{product?.reviews?.length} reviews</span>
               </div>
 
               <p className="mt-3 text-2xl text-gray-900">${product.price.toFixed(2)}</p>
@@ -137,48 +137,53 @@ const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose }) => 
                 <div className="mt-6">
                   {product.variants.map(variant => (
                     <div key={variant.type}>
-                      <h3 className="text-sm text-gray-800 font-medium">{variant.type}: <span className="text-gray-600">{selectedVariants[variant.type]}</span></h3>
-                       <div className="flex items-center space-x-2 mt-2">
-                          {variant.options.map(option => (
-                             <button 
-                                  key={option.value} 
-                                  onClick={() => handleVariantChange(variant.type, option.value)}
-                                  className={`px-3 py-1.5 border rounded-full text-xs font-medium ${selectedVariants[variant.type] === option.value ? 'bg-accent text-white border-accent' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'}`}
-                              >
-                                  {option.value}
-                              </button>
-                          ))}
+                      <h3 className="text-sm text-gray-800 font-medium">
+                        {variant.type}: <span className="text-gray-600">{selectedVariants[variant.type]}</span>
+                      </h3>
+                      <div className="flex items-center space-x-2 mt-2">
+                        {variant.options.map(option => (
+                          <button
+                            key={option.value}
+                            onClick={() => handleVariantChange(variant.type, option.value)}
+                            className={`px-3 py-1.5 border rounded-full text-xs font-medium ${
+                              selectedVariants[variant.type] === option.value
+                                ? 'bg-accent text-white border-accent'
+                                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                            }`}
+                          >
+                            {option.value}
+                          </button>
+                        ))}
                       </div>
                     </div>
                   ))}
                 </div>
               )}
-              
+
               <div className="mt-6">
                 <div className="flex items-center">
-                    <label htmlFor="quantity-quick-view" className="text-sm font-medium text-gray-800 mr-4">Quantity</label>
-                    <div className="flex items-center border border-gray-300 rounded-md">
-                        <button
-                            onClick={handleDecrement}
-                            disabled={quantity <= 1}
-                            className="px-3 py-1 text-lg font-medium text-gray-600 hover:bg-gray-100 rounded-l-md disabled:opacity-50 disabled:cursor-not-allowed"
-                            aria-label="Decrease quantity"
-                        >
-                            -
-                        </button>
-                        <span id="quantity-quick-view" className="w-12 text-center border-l border-r border-gray-300 py-1">{quantity}</span>
-                        <button
-                            onClick={handleIncrement}
-                            disabled={quantity >= product.stock}
-                            className="px-3 py-1 text-lg font-medium text-gray-600 hover:bg-gray-100 rounded-r-md disabled:opacity-50 disabled:cursor-not-allowed"
-                            aria-label="Increase quantity"
-                        >
-                            +
-                        </button>
-                    </div>
+                  <label htmlFor="quantity-quick-view" className="text-sm font-medium text-gray-800 mr-4">Quantity</label>
+                  <div className="flex items-center border border-gray-300 rounded-md">
+                    <button
+                      onClick={handleDecrement}
+                      disabled={quantity <= 1}
+                      className="px-3 py-1 text-lg font-medium text-gray-600 hover:bg-gray-100 rounded-l-md disabled:opacity-50 disabled:cursor-not-allowed"
+                      aria-label="Decrease quantity"
+                    >
+                      -
+                    </button>
+                    <span id="quantity-quick-view" className="w-12 text-center border-l border-r border-gray-300 py-1">{quantity}</span>
+                    <button
+                      onClick={handleIncrement}
+                      disabled={quantity >= product.stock}
+                      className="px-3 py-1 text-lg font-medium text-gray-600 hover:bg-gray-100 rounded-r-md disabled:opacity-50 disabled:cursor-not-allowed"
+                      aria-label="Increase quantity"
+                    >
+                      +
+                    </button>
+                  </div>
                 </div>
               </div>
-
 
               <div className="mt-4 flex flex-col gap-4">
                 <button
@@ -188,13 +193,15 @@ const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose }) => 
                 >
                   {isAdding ? <SpinnerIcon className="w-6 h-6" /> : 'Add to cart'}
                 </button>
-                <Link
-                    to={`/product/${product.id}`}
-                    onClick={handleClose}
-                    className="text-center text-sm font-medium text-accent hover:text-accent-hover"
+                <button
+                  onClick={() => {
+                    handleClose();
+                    router.push(`/product/${product.id}`);
+                  }}
+                  className="text-center text-sm font-medium text-accent hover:text-accent-hover"
                 >
-                    View full details
-                </Link>
+                  View full details
+                </button>
               </div>
             </div>
           </div>

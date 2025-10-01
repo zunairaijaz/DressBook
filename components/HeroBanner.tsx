@@ -1,6 +1,7 @@
+"use client";
 
 import React from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 
 const HeroBanner: React.FC = () => {
   return (
@@ -20,7 +21,7 @@ const HeroBanner: React.FC = () => {
           Discover thoughtfully designed clothing and accessories that bring confidence, style, and intention to your wardrobe.
         </p>
         <Link
-          to="/search"
+          href="/search"
           className="mt-8 inline-block bg-accent border border-transparent rounded-md py-3 px-10 text-base font-medium text-white hover:bg-accent-hover transition-colors"
         >
           Shop The Collection

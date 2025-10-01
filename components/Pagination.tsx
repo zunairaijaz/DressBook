@@ -1,7 +1,9 @@
+// components/Pagination.tsx
 "use client";
 
 import React from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import Link from 'next/link'; // Import Link from Next.js
+import { useSearchParams, usePathname } from 'next/navigation'; // Import Next.js hooks
 import ChevronLeftIcon from './icons/ChevronLeftIcon';
 import ChevronRightIcon from './icons/ChevronRightIcon';
 
@@ -11,12 +13,13 @@ interface PaginationProps {
 }
 
 const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages }) => {
-  const [searchParams] = useSearchParams();
+  const searchParams = useSearchParams();
+  const pathname = usePathname(); // Get the current path
 
   const createPageURL = (pageNumber: number) => {
     const newParams = new URLSearchParams(searchParams);
     newParams.set('page', String(pageNumber));
-    return `?${newParams.toString()}`;
+    return `${pathname}?${newParams.toString()}`;
   };
 
   const getPageNumbers = () => {
@@ -55,7 +58,7 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages }) => {
       <div className="flex items-center gap-2">
         {currentPage > 1 && (
           <Link
-            to={createPageURL(currentPage - 1)}
+            href={createPageURL(currentPage - 1)} // Use href for Next.js Link
             className="inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
           >
             <ChevronLeftIcon className="h-5 w-5 mr-1" />
@@ -68,7 +71,7 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages }) => {
                 typeof page === 'number' ? (
                 <Link
                     key={index}
-                    to={createPageURL(page)}
+                    href={createPageURL(page)} // Use href for Next.js Link
                     className={`inline-flex items-center justify-center h-10 w-10 border text-sm font-medium rounded-md ${
                     currentPage === page
                         ? 'border-accent bg-accent text-white'
@@ -87,7 +90,7 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages }) => {
 
         {currentPage < totalPages && (
           <Link
-            to={createPageURL(currentPage + 1)}
+            href={createPageURL(currentPage + 1)} // Use href for Next.js Link
             className="inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
           >
             Next

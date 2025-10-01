@@ -1,8 +1,10 @@
-
+// components/SideFilter.tsx
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+// Import Next.js hooks for routing
+import { useSearchParams, useRouter, usePathname } from 'next/navigation'; 
+
 import { categories, brands as allBrands, materials as allMaterials, patterns as allPatterns } from '../data/products';
 import StarIcon from './icons/StarIcon';
 
@@ -11,12 +13,14 @@ const ratingFilters = [
     { label: '3 Stars & Up', value: 3 },
     { label: '2 Stars & Up', value: 2 },
     { label: '1 Star & Up', value: 1 },
-]
+];
 
 const genderFilters = ['Female', 'Male', 'Unisex'];
 
 const SideFilter: React.FC = () => {
-    const [searchParams, setSearchParams] = useSearchParams();
+    const searchParams = useSearchParams();
+    const router = useRouter(); // Next.js router for navigation
+    const pathname = usePathname(); // Get the current path
 
     const [price, setPrice] = useState({
         min: searchParams.get('minPrice') || '',
@@ -30,6 +34,7 @@ const SideFilter: React.FC = () => {
         });
     }, [searchParams]);
 
+    // Update URL with new parameters
     const handleFilterChange = (key: string, value: string | string[], multi: boolean = false) => {
         const newParams = new URLSearchParams(searchParams.toString());
         if (multi) {
@@ -43,7 +48,8 @@ const SideFilter: React.FC = () => {
             }
         }
         newParams.set('page', '1');
-        setSearchParams(newParams);
+        // Use Next.js router to update the URL
+        router.push(`${pathname}?${newParams.toString()}`);
     };
 
     const handleMultiCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>, key: string) => {
@@ -67,7 +73,7 @@ const SideFilter: React.FC = () => {
         }
         newParams.delete('brand');
         newParams.set('page', '1');
-        setSearchParams(newParams);
+        router.push(`${pathname}?${newParams.toString()}`);
     };
 
     const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -82,7 +88,7 @@ const SideFilter: React.FC = () => {
         if (price.max) newParams.set('maxPrice', price.max);
         else newParams.delete('maxPrice');
         newParams.set('page', '1');
-        setSearchParams(newParams);
+        router.push(`${pathname}?${newParams.toString()}`);
     };
     
     const clearFilters = () => {
@@ -91,8 +97,8 @@ const SideFilter: React.FC = () => {
         if (query) {
             newParams.set('q', query);
         }
-        setSearchParams(newParams);
-    }
+        router.push(`${pathname}?${newParams.toString()}`);
+    };
 
     const uniqueCategories = ['All', ...categories.map(c => c.name)];
     const selectedCategory = searchParams.get('category') || 'All';
@@ -194,7 +200,7 @@ const SideFilter: React.FC = () => {
                     ))}
                 </div>
             </div>
-
+            
             <div>
                 <h3 className="text-lg font-medium text-gray-900">Material</h3>
                 <div className="mt-4 space-y-2 max-h-40 overflow-y-auto">
@@ -215,7 +221,7 @@ const SideFilter: React.FC = () => {
                 </div>
             </div>
 
-             <div>
+            <div>
                 <h3 className="text-lg font-medium text-gray-900">Pattern</h3>
                 <div className="mt-4 space-y-2 max-h-40 overflow-y-auto">
                     {allPatterns.map(pattern => (
@@ -234,22 +240,29 @@ const SideFilter: React.FC = () => {
                     ))}
                 </div>
             </div>
-            
+
             <div>
-                <h3 className="text-lg font-medium text-gray-900">Customer Reviews</h3>
+                <h3 className="text-lg font-medium text-gray-900">Rating</h3>
                 <div className="mt-4 space-y-2">
                     {ratingFilters.map(rating => (
                         <button
                             key={rating.value}
                             type="button"
-                            onClick={() => handleFilterChange('rating', selectedRating === String(rating.value) ? '' : String(rating.value))}
-                            className={`flex items-center text-sm ${selectedRating === String(rating.value) ? 'text-accent' : 'text-gray-600 hover:text-accent'}`}
+                            onClick={() => handleFilterChange('rating', String(rating.value))}
+                            className={`flex items-center text-sm font-medium transition-colors duration-200 w-full text-left ${
+                                selectedRating === String(rating.value)
+                                    ? 'text-accent font-bold'
+                                    : 'text-gray-600 hover:text-accent'
+                            }`}
                         >
-                            <div className="flex items-center">
-                                {[...Array(5)].map((_, i) => (
-                                    <StarIcon key={i} className={`w-5 h-5 ${rating.value > i ? 'text-yellow-400' : 'text-gray-300'}`} />
+                            <span className="flex items-center">
+                                {Array.from({ length: 5 }, (_, i) => (
+                                    <StarIcon
+                                        key={i}
+                                        className={`h-5 w-5 ${i < rating.value ? 'text-yellow-400' : 'text-gray-200'}`}
+                                    />
                                 ))}
-                            </div>
+                            </span>
                             <span className="ml-2">{rating.label}</span>
                         </button>
                     ))}
@@ -276,3 +289,4 @@ const SideFilter: React.FC = () => {
 };
 
 export default SideFilter;
+

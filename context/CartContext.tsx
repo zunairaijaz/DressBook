@@ -5,7 +5,7 @@ import {
   addToCartAPI,
   updateCartItemAPI,
   removeFromCartAPI
-} from '../api/cart';
+} from '../lib/cart';
 
 interface CartContextProps {
   items: CartItem[];
