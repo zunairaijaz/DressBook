@@ -649,9 +649,6 @@ video {
 .right-0 {
   right: 0px;
 }
-.right-1 {
-  right: 0.25rem;
-}
 .right-2 {
   right: 0.5rem;
 }
@@ -663,9 +660,6 @@ video {
 }
 .top-0 {
   top: 0px;
-}
-.top-1 {
-  top: 0.25rem;
 }
 .top-1\/2 {
   top: 50%;
@@ -723,6 +717,9 @@ video {
 }
 .-mr-2 {
   margin-right: -0.5rem;
+}
+.-mt-2 {
+  margin-top: -0.5rem;
 }
 .mb-12 {
   margin-bottom: 3rem;
@@ -793,8 +790,8 @@ video {
 .mt-8 {
   margin-top: 2rem;
 }
-.-mt-2 {
-  margin-top: -0.5rem;
+.mb-2 {
+  margin-bottom: 0.5rem;
 }
 .line-clamp-2 {
   overflow: hidden;
@@ -822,6 +819,9 @@ video {
 }
 .grid {
   display: grid;
+}
+.contents {
+  display: contents;
 }
 .hidden {
   display: none;
@@ -856,6 +856,9 @@ video {
 .h-6 {
   height: 1.5rem;
 }
+.h-64 {
+  height: 16rem;
+}
 .h-8 {
   height: 2rem;
 }
@@ -867,9 +870,6 @@ video {
 }
 .h-full {
   height: 100%;
-}
-.h-64 {
-  height: 16rem;
 }
 .max-h-40 {
   max-height: 10rem;
@@ -1030,6 +1030,9 @@ video {
 .flex-wrap {
   flex-wrap: wrap;
 }
+.items-start {
+  align-items: flex-start;
+}
 .items-end {
   align-items: flex-end;
 }
@@ -1054,6 +1057,9 @@ video {
 .gap-2 {
   gap: 0.5rem;
 }
+.gap-3 {
+  gap: 0.75rem;
+}
 .gap-4 {
   gap: 1rem;
 }
@@ -1065,9 +1071,6 @@ video {
 }
 .gap-8 {
   gap: 2rem;
-}
-.gap-3 {
-  gap: 0.75rem;
 }
 .gap-x-12 {
   -moz-column-gap: 3rem;
@@ -1235,6 +1238,10 @@ video {
   --tw-border-opacity: 1;
   border-color: rgb(255 153 0 / var(--tw-border-opacity, 1));
 }
+.border-accent-hover {
+  --tw-border-opacity: 1;
+  border-color: rgb(230 138 0 / var(--tw-border-opacity, 1));
+}
 .border-gray-200 {
   --tw-border-opacity: 1;
   border-color: rgb(229 231 235 / var(--tw-border-opacity, 1));
@@ -1250,16 +1257,9 @@ video {
 .border-transparent {
   border-color: transparent;
 }
-.border-accent-hover {
-  --tw-border-opacity: 1;
-  border-color: rgb(230 138 0 / var(--tw-border-opacity, 1));
-}
 .bg-accent {
   --tw-bg-opacity: 1;
   background-color: rgb(255 153 0 / var(--tw-bg-opacity, 1));
-}
-.bg-accent\/10 {
-  background-color: rgb(255 153 0 / 0.1);
 }
 .bg-amazon-blue {
   --tw-bg-opacity: 1;
@@ -1465,6 +1465,9 @@ video {
 .pb-6 {
   padding-bottom: 1.5rem;
 }
+.pl-1 {
+  padding-left: 0.25rem;
+}
 .pl-10 {
   padding-left: 2.5rem;
 }
@@ -1500,9 +1503,6 @@ video {
 }
 .pt-8 {
   padding-top: 2rem;
-}
-.pl-1 {
-  padding-left: 0.25rem;
 }
 .text-left {
   text-align: left;

@@ -10,9 +10,9 @@ import {
 interface CartContextProps {
   items: CartItem[];
   loading: boolean;
-  addItem: (product: Omit<CartItem, 'quantity'>, quantity: number) => Promise<void>;
-  removeItem: (id: number) => Promise<void>;
-  updateQuantity: (id: number, quantity: number) => Promise<void>;
+  addItem: (product: { id: string; selectedVariant?: string }, quantity: number) => Promise<void>;
+  removeItem: (id: string) => Promise<void>;
+  updateQuantity: (id: string, quantity: number) => Promise<void>;
   cartCount: number;
   totalPrice: number;
 }
@@ -23,6 +23,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [items, setItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Fetch cart on mount
   useEffect(() => {
     const fetchCart = async () => {
       try {
@@ -38,7 +39,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     fetchCart();
   }, []);
 
-  const addItem = useCallback(async (product: Omit<CartItem, 'quantity'>, quantity: number) => {
+  const addItem = useCallback(async (product: { id: string; selectedVariant?: string }, quantity: number) => {
     try {
       const updatedCart = await addToCartAPI(product, quantity);
       setItems(updatedCart);
@@ -47,7 +48,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   }, []);
 
-  const removeItem = useCallback(async (id: number) => {
+  const removeItem = useCallback(async (id: string) => {
     try {
       const updatedCart = await removeFromCartAPI(id);
       setItems(updatedCart);
@@ -56,7 +57,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   }, []);
 
-  const updateQuantity = useCallback(async (id: number, quantity: number) => {
+  const updateQuantity = useCallback(async (id: string, quantity: number) => {
     try {
       const updatedCart = await updateCartItemAPI(id, quantity);
       setItems(updatedCart);
@@ -66,7 +67,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, []);
 
   const cartCount = items.reduce((count, item) => count + item.quantity, 0);
-  const totalPrice = items.reduce((total, item) => total + item.price * item.quantity, 0);
+  const totalPrice = items.reduce((total, item) => total + (item.product.price || 0) * item.quantity, 0);
 
   return (
     <CartContext.Provider value={{ items, loading, addItem, removeItem, updateQuantity, cartCount, totalPrice }}>
