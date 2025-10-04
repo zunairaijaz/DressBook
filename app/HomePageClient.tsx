@@ -28,21 +28,8 @@ const HomePageClient: React.FC<HomePageClientProps> = ({ featuredProducts, kitch
   return (
     <div>
       <HeroBanner />
-      <ProductCarousel 
-        title="Featured Products" 
-        products={featuredProducts}
-        onQuickView={handleOpenQuickView}
-      />
-      <CollectionList 
-        title="Shop by Category"
-        subtitle="Browse our curated collections to find exactly what you need."
-        collections={homeCategories}
-      />
-       <ProductCarousel 
-        title="Top Sales" 
-        products={kitchenwareProducts}
-        onQuickView={handleOpenQuickView}
-      />
+    
+   
       <Newsletter />
       <QuickViewModal product={quickViewProduct} onClose={handleCloseQuickView} />
     </div>

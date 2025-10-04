@@ -16,24 +16,30 @@ const AdminProducts: React.FC = () => {
   const router = useRouter();
 
   // Fetch all products from the API
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        setLoading(true);
-        const res = await fetch("/api/products");
-        if (!res.ok) {
-          throw new Error(`Failed to fetch products: ${res.statusText}`);
-        }
-        const data: Product[] = await res.json();
-        setProducts(data);
-      } catch (err: any) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+useEffect(() => {
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch("/api/products");
+      if (!res.ok) {
+        throw new Error(`Failed to fetch products: ${res.statusText}`);
       }
-    };
-    fetchProducts();
-  }, []);
+
+      const data = await res.json();
+
+      // If your API returns { products: [...] }
+      const productArray: Product[] = Array.isArray(data) ? data : data.products || [];
+
+      setProducts(productArray);
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+  fetchProducts();
+}, []);
+
 
   const handleDelete = async (id: string) => {
     if (window.confirm("Are you sure you want to delete this product?")) {

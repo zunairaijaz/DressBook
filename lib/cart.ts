@@ -36,19 +36,24 @@ export const getCartAPI = async (): Promise<CartItem[]> => {
 
 // Add item to cart
 export const addToCartAPI = async (
-  product: { id: string; selectedVariant?: string },
+  product: { id: string; selectedVariant?: Record<string, string> },
   quantity: number
 ): Promise<CartItem[]> => {
   const userId = getCurrentUserId();
+
+  // Convert selectedVariant object to JSON string for backend
+  const payload = {
+    product: { id: product.id, selectedVariant: product.selectedVariant ? JSON.stringify(product.selectedVariant) : null },
+    quantity,
+    userId,
+  };
+
   const res = await fetch(API_BASE, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      product: { id: product.id, selectedVariant: product.selectedVariant || null },
-      quantity,
-      userId,
-    }),
+    body: JSON.stringify(payload),
   });
+
   if (!res.ok) throw new Error(`Failed to add to cart: ${res.status}`);
   return res.json();
 };

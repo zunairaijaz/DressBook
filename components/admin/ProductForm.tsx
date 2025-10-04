@@ -3,7 +3,14 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { categories, brands } from "@/data/products";
+import {
+  categories,
+  brands,
+  materials,
+  patterns,
+  genders,
+  statuses,
+} from "@/data/filters";
 import { Product } from "@/types";
 import UploadIcon from "@/components/icons/UploadIcon";
 import XMarkIcon from "@/components/icons/XMarkIcon";
@@ -21,15 +28,15 @@ const ProductForm: React.FC<Props> = ({ id }) => {
     price: 0,
     originalPrice: undefined,
     description: "",
-    category: categories[0]?.name ?? "", // Handle potential undefined values
-    brand: brands[0] ?? "", // Handle potential undefined values
+    category: categories[0] ?? "",
+    brand: brands[0] ?? "",
     stock: 0,
     images: [],
     sku: "",
-    material: "",
-    gender: "Female",
-    pattern: "",
-    status: "Active",
+    material: materials[0] ?? "",
+    gender: genders[0] ?? "Female",
+    pattern: patterns[0] ?? "",
+    status: statuses[0] ?? "Active",
   });
 
   const [imageFiles, setImageFiles] = useState<File[]>([]);
@@ -114,9 +121,15 @@ const ProductForm: React.FC<Props> = ({ id }) => {
     if (isExistingImage) {
       setExistingImageUrls((prev) => prev.filter((url) => url !== imageUrl));
     } else {
-      const newImageFilesIndex = imagePreviews.findIndex((url) => url === imageUrl);
+      const newImageFilesIndex = imagePreviews.findIndex(
+        (url) => url === imageUrl
+      );
       if (newImageFilesIndex > -1) {
-         setImageFiles((prev) => prev.filter((_, i) => i !== newImageFilesIndex - existingImageUrls.length));
+        setImageFiles((prev) =>
+          prev.filter(
+            (_, i) => i !== newImageFilesIndex - existingImageUrls.length
+          )
+        );
       }
     }
     setImagePreviews((prev) => prev.filter((_, i) => i !== index));
@@ -171,7 +184,7 @@ const ProductForm: React.FC<Props> = ({ id }) => {
         return;
       }
     }
-    
+
     // --- Product Data Logic ---
     try {
       if (uploadedImageUrls.length === 0) {
@@ -214,9 +227,7 @@ const ProductForm: React.FC<Props> = ({ id }) => {
   }
 
   if (error) {
-    return (
-      <p className="text-center mt-8 text-red-500">Error: {error}</p>
-    );
+    return <p className="text-center mt-8 text-red-500">Error: {error}</p>;
   }
 
   return (
@@ -290,8 +301,8 @@ const ProductForm: React.FC<Props> = ({ id }) => {
               className={inputClasses}
             >
               {categories.map((c) => (
-                <option key={c.name} value={c.name}>
-                  {c.name}
+                <option key={c} value={c}>
+                  {c}
                 </option>
               ))}
             </select>
@@ -341,23 +352,33 @@ const ProductForm: React.FC<Props> = ({ id }) => {
         <div className="grid grid-cols-2 gap-4 mb-4">
           <div>
             <label className="block text-sm font-medium">Material</label>
-            <input
-              type="text"
+            <select
               name="material"
               value={product.material}
               onChange={handleChange}
               className={inputClasses}
-            />
+            >
+              {materials.map((m) => (
+                <option key={m} value={m}>
+                  {m}
+                </option>
+              ))}
+            </select>
           </div>
           <div>
             <label className="block text-sm font-medium">Pattern</label>
-            <input
-              type="text"
+            <select
               name="pattern"
               value={product.pattern}
               onChange={handleChange}
               className={inputClasses}
-            />
+            >
+              {patterns.map((p) => (
+                <option key={p} value={p}>
+                  {p}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
 
@@ -371,7 +392,7 @@ const ProductForm: React.FC<Props> = ({ id }) => {
               onChange={handleChange}
               className={inputClasses}
             >
-              {["Female", "Male", "Unisex"].map((g) => (
+              {genders.map((g) => (
                 <option key={g} value={g}>
                   {g}
                 </option>
@@ -386,7 +407,7 @@ const ProductForm: React.FC<Props> = ({ id }) => {
               onChange={handleChange}
               className={inputClasses}
             >
-              {["Active", "Draft", "Archived"].map((s) => (
+              {statuses.map((s) => (
                 <option key={s} value={s}>
                   {s}
                 </option>
@@ -397,7 +418,9 @@ const ProductForm: React.FC<Props> = ({ id }) => {
 
         {/* Image Upload Area */}
         <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700">Product Images</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Product Images
+          </label>
           <div
             className={`mt-1 flex justify-center border-2 border-dashed rounded-md px-6 pt-5 pb-6 transition-colors ${
               isDragging ? "border-accent-hover bg-gray-50" : "border-gray-300"
@@ -408,7 +431,9 @@ const ProductForm: React.FC<Props> = ({ id }) => {
           >
             <div className="space-y-1 text-center">
               <UploadIcon
-                className={`mx-auto h-12 w-12 ${isDragging ? "text-accent" : "text-gray-400"}`}
+                className={`mx-auto h-12 w-12 ${
+                  isDragging ? "text-accent" : "text-gray-400"
+                }`}
               />
               <div className="flex text-sm text-gray-600">
                 <label
@@ -427,9 +452,7 @@ const ProductForm: React.FC<Props> = ({ id }) => {
                 </label>
                 <p className="pl-1">or drag and drop</p>
               </div>
-              <p className="text-xs text-gray-500">
-                PNG, JPG, GIF up to 10MB
-              </p>
+              <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
             </div>
           </div>
           <div className="mt-4 flex flex-wrap gap-4">

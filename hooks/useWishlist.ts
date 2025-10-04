@@ -1,10 +1,16 @@
-import { useContext } from 'react';
-import { WishlistContext } from '../context/WishlistContext';
+// hooks/useWishlist.ts
+import { useState } from 'react';
 
-export const useWishlist = () => {
-  const context = useContext(WishlistContext);
-  if (context === undefined) {
-    throw new Error('useWishlist must be used within a WishlistProvider');
-  }
-  return context;
-};
+export function useWishlist() {
+  const [wishlist, setWishlist] = useState<string[]>([]); // string[] for product IDs
+
+  const toggleWishlist = (id: string) => {
+    if (wishlist.includes(id)) {
+      setWishlist(wishlist.filter(i => i !== id));
+    } else {
+      setWishlist([...wishlist, id]);
+    }
+  };
+
+  return { wishlist, toggleWishlist };
+}

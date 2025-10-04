@@ -18,9 +18,10 @@ const sortOptions = [
   { name: 'Featured', value: 'featured' },
   { name: 'Price: Low to High', value: 'price-asc' },
   { name: 'Price: High to Low', value: 'price-desc' },
-  { name: 'Customer Rating', value: 'rating-desc' },
-  { name: 'Newest', value: 'newest-desc' },
+  { name: 'Customer Rating', value: 'rating-desc' }, 
+  { name: 'Newest', value: 'newest' }, 
 ];
+
 
 function SearchPageComponent() {
   const searchParams = useSearchParams();
@@ -39,29 +40,40 @@ function SearchPageComponent() {
   const category = searchParams.get('category') || 'All';
   const sortBy = searchParams.get('sort') || 'featured';
 
-  const fetchProducts = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const params = new URLSearchParams(searchParams.toString());
-      params.set('limit', String(PRODUCTS_PER_PAGE));
+ const fetchProducts = useCallback(async () => {
+  setLoading(true);
+  setError(null);
+  try {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('limit', String(PRODUCTS_PER_PAGE));
 
-      const response = await fetch(`/api/products?${params.toString()}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch products');
-      }
-      const data = await response.json();
-      setProducts(data.products);
-      setTotalPages(data.totalPages);
-      setTotalCount(data.totalCount);
-    } catch (err) {
-      setError('Failed to fetch products. Please try again.');
-      console.error(err);
-    } finally {
-      setLoading(false);
-      window.scrollTo(0, 0);
+    const response = await fetch(`/api/products?${params.toString()}`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch products');
     }
-  }, [searchParams]);
+
+    const data = await response.json();
+
+    if (Array.isArray(data)) {
+      // API returns raw array
+      setProducts(data);
+      setTotalPages(1);
+      setTotalCount(data.length);
+    } else {
+      // API returns { products, totalPages, totalCount }
+      setProducts(Array.isArray(data.products) ? data.products : []);
+      setTotalPages(data.totalPages || 1);
+      setTotalCount(data.totalCount || 0);
+    }
+  } catch (err) {
+    setError('Failed to fetch products. Please try again.');
+    console.error(err);
+  } finally {
+    setLoading(false);
+    window.scrollTo(0, 0);
+  }
+}, [searchParams]);
+
 
   useEffect(() => {
     fetchProducts();
@@ -164,15 +176,21 @@ function SearchPageComponent() {
                 <p className="col-span-full text-center text-red-500 py-10">{error}</p>
             ) : (
                 <div className={`pt-6 ${view === 'grid' ? 'grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 xl:grid-cols-3' : 'flex flex-col gap-y-6'}`}>
-                {products.length > 0 ? (
-                    products.map((product) => (
-                    <ProductCard key={product.id} product={product} onQuickView={handleOpenQuickView} view={view as 'grid' | 'list'} />
-                    ))
-                ) : (
-                    <p className="col-span-full text-center text-gray-500 py-10">
-                    No products match your criteria. Try adjusting your filters.
-                    </p>
-                )}
+             {Array.isArray(products) && products.length > 0 ? (
+  products.map((product) => (
+    <ProductCard
+      key={product.id}
+      product={product}
+      onQuickView={handleOpenQuickView}
+      view={view as 'grid' | 'list'}
+    />
+  ))
+) : (
+  <p className="col-span-full text-center text-gray-500 py-10">
+    No products match your criteria. Try adjusting your filters.
+  </p>
+)}
+
                 </div>
             )}
 

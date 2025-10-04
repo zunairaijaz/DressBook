@@ -1,34 +1,35 @@
-import React from 'react';
-// FIX: Using namespace import to fix module resolution errors.
-import * as ReactRouterDOM from 'react-router-dom';
-import { useCart } from '../hooks/useCart';
-import { useAuth } from '../hooks/useAuth';
+"use client";
 
-const { Link, useNavigate, useLocation } = ReactRouterDOM;
+import React from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useCart } from "../hooks/useCart";
+import { useAuth } from "../hooks/useAuth";
 
 const CartPage: React.FC = () => {
   const { items, removeItem, updateQuantity, totalPrice } = useCart();
   const { isAuthenticated } = useAuth();
-  const navigate = useNavigate();
-  const location = useLocation();
+  const router = useRouter();
 
   const handleCheckout = (e: React.MouseEvent) => {
     if (!isAuthenticated) {
-        e.preventDefault();
-        navigate('/login', { state: { from: location } });
+      e.preventDefault();
+      router.push("/login");
     }
   };
 
   return (
     <div className="bg-white">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <h1 className="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl text-center">Shopping Cart</h1>
+        <h1 className="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl text-center">
+          Shopping Cart
+        </h1>
 
         {items.length === 0 ? (
           <div className="text-center mt-12">
             <p className="text-xl text-gray-500">Your cart is empty.</p>
             <Link
-              to="/search"
+              href="/search"
               className="mt-6 inline-block bg-accent border border-transparent rounded-md py-3 px-8 text-base font-medium text-white hover:bg-accent-hover"
             >
               Continue Shopping
@@ -57,17 +58,22 @@ const CartPage: React.FC = () => {
                         <div>
                           <div className="flex justify-between">
                             <h3 className="text-sm">
-                              <Link to={`/product/${product.id}`} className="font-medium text-gray-700 hover:text-gray-800">
+                              <Link
+                                href={`/product/${product.id}`}
+                                className="font-medium text-gray-700 hover:text-gray-800"
+                              >
                                 {product.name}
                               </Link>
                             </h3>
                           </div>
-                           {product.selectedVariant && (
-                                <p className="mt-1 text-sm text-gray-500">
-                                    {Object.values(product.selectedVariant).join(' / ')}
-                                </p>
-                            )}
-                          <p className="mt-1 text-sm font-medium text-gray-900">${product.price.toFixed(2)}</p>
+                          {product.selectedVariant && (
+                            <p className="mt-1 text-sm text-gray-500">
+                              {Object.values(product.selectedVariant).join(" / ")}
+                            </p>
+                          )}
+                          <p className="mt-1 text-sm font-medium text-gray-900">
+                            ${product.price.toFixed(2)}
+                          </p>
                         </div>
 
                         <div className="mt-4 sm:mt-0 sm:pr-9">
@@ -76,34 +82,48 @@ const CartPage: React.FC = () => {
                           </label>
                           <div className="flex items-center border border-gray-300 rounded-md w-fit">
                             <button
-                                onClick={() => updateQuantity(product.id, product.quantity - 1)}
-                                disabled={product.quantity <= 1}
-                                className="px-3 py-1 text-lg font-medium text-gray-600 hover:bg-gray-100 rounded-l-md disabled:opacity-50 disabled:cursor-not-allowed"
-                                aria-label="Decrease quantity"
+                              onClick={() => updateQuantity(product.id, product.quantity - 1)}
+                              disabled={product.quantity <= 1}
+                              className="px-3 py-1 text-lg font-medium text-gray-600 hover:bg-gray-100 rounded-l-md disabled:opacity-50 disabled:cursor-not-allowed"
+                              aria-label="Decrease quantity"
                             >
-                                -
+                              -
                             </button>
-                            <span id={`quantity-${product.id}`} className="w-12 text-center border-l border-r border-gray-300 py-1">{product.quantity}</span>
-                            <button
-                                onClick={() => updateQuantity(product.id, product.quantity + 1)}
-                                disabled={product.quantity >= product.stock}
-                                className="px-3 py-1 text-lg font-medium text-gray-600 hover:bg-gray-100 rounded-r-md disabled:opacity-50 disabled:cursor-not-allowed"
-                                aria-label="Increase quantity"
+                            <span
+                              id={`quantity-${product.id}`}
+                              className="w-12 text-center border-l border-r border-gray-300 py-1"
                             >
-                                +
+                              {product.quantity}
+                            </span>
+                            <button
+                              onClick={() => updateQuantity(product.id, product.quantity + 1)}
+                              disabled={product.quantity >= product.stock}
+                              className="px-3 py-1 text-lg font-medium text-gray-600 hover:bg-gray-100 rounded-r-md disabled:opacity-50 disabled:cursor-not-allowed"
+                              aria-label="Increase quantity"
+                            >
+                              +
                             </button>
                           </div>
 
-
                           <div className="absolute top-0 right-0">
-                            <button 
-                              type="button" 
+                            <button
+                              type="button"
                               className="-m-2 p-2 inline-flex text-gray-400 hover:text-gray-500"
                               onClick={() => removeItem(product.id)}
                             >
                               <span className="sr-only">Remove</span>
-                              <svg className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                              <svg
+                                className="h-5 w-5"
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 20 20"
+                                fill="currentColor"
+                                aria-hidden="true"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                  clipRule="evenodd"
+                                />
                               </svg>
                             </button>
                           </div>
@@ -135,18 +155,14 @@ const CartPage: React.FC = () => {
                   </dt>
                   <dd className="text-sm font-medium text-gray-900">$5.00</dd>
                 </div>
-                 <div className="border-t border-gray-200 pt-4 flex items-center justify-between">
-                  <dt className="flex items-center text-sm text-gray-600">
-                    <span>Tax estimate</span>
-                  </dt>
-                  <dd className="text-sm font-medium text-gray-900">${(totalPrice * 0.08).toFixed(2)}</dd>
-                </div>
                 <div className="border-t border-gray-200 pt-4 flex items-center justify-between">
                   <dt className="text-base font-medium text-gray-900">Order total</dt>
-                  <dd className="text-base font-medium text-gray-900">${(totalPrice + 5.00 + (totalPrice * 0.08)).toFixed(2)}</dd>
+                  <dd className="text-base font-medium text-gray-900">
+                    ${(totalPrice + 5.0).toFixed(2)}
+                  </dd>
                 </div>
               </dl>
-              
+
               <div className="mt-6">
                 <div className="flex space-x-2">
                     <input type="text" placeholder="Discount code" className="block w-full rounded-md border-gray-300 shadow-sm focus:border-accent focus:ring-accent sm:text-sm" />
@@ -156,7 +172,7 @@ const CartPage: React.FC = () => {
 
               <div className="mt-6">
                 <Link
-                  to="/checkout"
+                  href="/checkout"
                   onClick={handleCheckout}
                   className="w-full bg-accent border border-transparent rounded-md shadow-sm py-3 px-4 text-base font-medium text-white hover:bg-accent-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-accent block text-center"
                 >

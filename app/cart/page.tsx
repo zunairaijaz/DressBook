@@ -24,7 +24,9 @@ const CartPage: React.FC = () => {
   return (
     <div className="bg-white">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <h1 className="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl text-center">Shopping Cart</h1>
+        <h1 className="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl text-center">
+          Shopping Cart
+        </h1>
 
         {items.length === 0 ? (
           <div className="text-center mt-12">
@@ -46,7 +48,7 @@ const CartPage: React.FC = () => {
               <ul role="list" className="border-t border-b border-gray-200 divide-y divide-gray-200">
                 {items.map((cartItem) => {
                   const product = cartItem.product;
-                  if (!product) return null; // safety check
+                  if (!product) return null;
 
                   return (
                     <li key={cartItem.id} className="flex py-6 sm:py-10">
@@ -147,15 +149,9 @@ const CartPage: React.FC = () => {
                   </dt>
                   <dd className="text-sm font-medium text-gray-900">$5.00</dd>
                 </div>
-                 <div className="border-t border-gray-200 pt-4 flex items-center justify-between">
-                  <dt className="flex items-center text-sm text-gray-600">
-                    <span>Tax estimate</span>
-                  </dt>
-                  <dd className="text-sm font-medium text-gray-900">${(totalPrice * 0.08).toFixed(2)}</dd>
-                </div>
                 <div className="border-t border-gray-200 pt-4 flex items-center justify-between">
                   <dt className="text-base font-medium text-gray-900">Order total</dt>
-                  <dd className="text-base font-medium text-gray-900">${(totalPrice + 5.00 + (totalPrice * 0.08)).toFixed(2)}</dd>
+                  <dd className="text-base font-medium text-gray-900">${(totalPrice + 5.00).toFixed(2)}</dd>
                 </div>
               </dl>
               

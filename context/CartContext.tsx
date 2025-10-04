@@ -10,11 +10,13 @@ import {
 interface CartContextProps {
   items: CartItem[];
   loading: boolean;
-  addItem: (product: { id: string; selectedVariant?: string }, quantity: number) => Promise<void>;
+  addItem: (product: { id: string; selectedVariant?: Record<string, string> }, quantity: number) => Promise<void>;
   removeItem: (id: string) => Promise<void>;
   updateQuantity: (id: string, quantity: number) => Promise<void>;
   cartCount: number;
   totalPrice: number;
+    clearCart: () => Promise<void>;
+
 }
 
 export const CartContext = createContext<CartContextProps | undefined>(undefined);
@@ -28,7 +30,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const fetchCart = async () => {
       try {
         setLoading(true);
-        const cartItems = await getCartAPI();
+        const cartItems: CartItem[] = await getCartAPI();
         setItems(cartItems);
       } catch (error) {
         console.error("Failed to fetch cart", error);
@@ -39,39 +41,84 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     fetchCart();
   }, []);
 
-  const addItem = useCallback(async (product: { id: string; selectedVariant?: string }, quantity: number) => {
-    try {
-      const updatedCart = await addToCartAPI(product, quantity);
-      setItems(updatedCart);
-    } catch (error) {
-      console.error("Failed to add item to cart", error);
-    }
-  }, []);
+  // Add item to cart
+  const addItem = useCallback(
+    async (product: { id: string; selectedVariant?: Record<string, string> }, quantity: number) => {
+      try {
+        // Ensure selectedVariant is always an object
+        const payload: { id: string; selectedVariant?: Record<string, string> } = {
+          id: product.id,
+          selectedVariant: product.selectedVariant || {}
+        };
+        const updatedCart: CartItem[] = await addToCartAPI(payload, quantity);
+        setItems(updatedCart);
+      } catch (error) {
+        console.error("Failed to add item to cart", error);
+      }
+    },
+    []
+  );
 
+  // Remove item from cart
   const removeItem = useCallback(async (id: string) => {
     try {
-      const updatedCart = await removeFromCartAPI(id);
+      const updatedCart: CartItem[] = await removeFromCartAPI(id);
       setItems(updatedCart);
     } catch (error) {
       console.error("Failed to remove item from cart", error);
     }
   }, []);
 
+  // Update item quantity
   const updateQuantity = useCallback(async (id: string, quantity: number) => {
     try {
-      const updatedCart = await updateCartItemAPI(id, quantity);
+      const updatedCart: CartItem[] = await updateCartItemAPI(id, quantity);
       setItems(updatedCart);
     } catch (error) {
       console.error("Failed to update item quantity", error);
     }
   }, []);
+const clearCart = useCallback(async () => {
+  try {
+    const res = await fetch('/api/cart/clear', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId: "YOUR_LOGGED_IN_USER_ID" }), // send userId
+    });
+
+    const data = await res.json(); // now this won't fail
+    if (data.success) {
+      setItems([]);
+    } else {
+      console.error("Failed to clear cart:", data.message);
+    }
+  } catch (error) {
+    console.error("Failed to clear cart", error);
+  }
+}, []);
 
   const cartCount = items.reduce((count, item) => count + item.quantity, 0);
-  const totalPrice = items.reduce((total, item) => total + (item.product.price || 0) * item.quantity, 0);
+  const totalPrice = items.reduce(
+    (total, item) => total + (item.product?.price || item.price || 0) * item.quantity,
+    0
+  );
+// Add this inside your CartProvider component
+
+
 
   return (
-    <CartContext.Provider value={{ items, loading, addItem, removeItem, updateQuantity, cartCount, totalPrice }}>
-      {children}
-    </CartContext.Provider>
+<CartContext.Provider value={{
+  items,
+  loading,
+  addItem,
+  removeItem,
+  updateQuantity,
+  cartCount,
+  totalPrice,
+  clearCart,
+}}>
+  {children}
+</CartContext.Provider>
+
   );
 };

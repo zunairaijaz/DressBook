@@ -35,10 +35,17 @@ export interface Product {
   status: 'Active' | 'Inactive'; // Product status
 }
 
-export interface CartItem extends Product {
+export interface CartItem {
+  stock: number;
+  images: any;
+  name: string;
+  price: number;
+  id: string; // unique cart item id
+  product: Product; // the actual product object
   quantity: number;
-  selectedVariant?: { [key: string]: string };
+  selectedVariant?: { [key: string]: string }; // e.g., { size: "M", color: "Red" }
 }
+
 
 export interface User {
   id: string;
