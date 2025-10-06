@@ -86,7 +86,8 @@ const CheckoutPage: React.FC = () => {
         productId: item.product.id,
         quantity: item.quantity,
         price: item.product.price,
-        selectedVariant: item.selectedVariant || null,
+        variant: item.selectedVariant || null,
+        product: { name: item.product.name, images: item.product.images }, 
       }));
 
    const res = await fetch("/api/orders", {

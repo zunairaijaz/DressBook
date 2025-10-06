@@ -31,7 +31,7 @@ const ProductsPage: React.FC = () => {
   useEffect(() => {
     const title =
       selectedCategory === "All" ? "All Products" : selectedCategory;
-    document.title = `${title} | ShopSphere`;
+    document.title = `${title} | The Dress Book`;
 
     let metaDescription = document.querySelector<HTMLMetaElement>(
       'meta[name="description"]'
@@ -44,17 +44,17 @@ const ProductsPage: React.FC = () => {
 
     const descriptionContent =
       selectedCategory === "All"
-        ? "Browse our entire collection of high-quality products at ShopSphere."
-        : `Shop curated ${selectedCategory.toLowerCase()} at ShopSphere.`;
+        ? "Explore The Dress Book’s complete collection of stylish fashion items."
+        : `Shop ${selectedCategory.toLowerCase()} from The Dress Book.`;
 
     metaDescription.setAttribute("content", descriptionContent);
 
     return () => {
-      document.title = "ShopSphere";
+      document.title = "The Dress Book";
       if (metaDescription) {
         metaDescription.setAttribute(
           "content",
-          "A modern, fully responsive e-commerce website designed to provide a seamless shopping experience."
+          "A modern, elegant online fashion store — The Dress Book."
         );
       }
     };
@@ -69,12 +69,14 @@ const ProductsPage: React.FC = () => {
     }
   };
 
+  // ✅ Filter only active products + category + price
   const filteredProducts = useMemo(() => {
     return allProducts.filter((product) => {
+      const isActive = product.status?.toLowerCase() === "active" || "Active";
       const categoryMatch =
         selectedCategory === "All" || product.category === selectedCategory;
       const priceMatch = product.price <= priceRange;
-      return categoryMatch && priceMatch;
+      return isActive && categoryMatch && priceMatch;
     });
   }, [allProducts, selectedCategory, priceRange]);
 
@@ -88,7 +90,7 @@ const ProductsPage: React.FC = () => {
             {selectedCategory === "All" ? "All Products" : selectedCategory}
           </h1>
           <p className="mt-4 max-w-xl mx-auto text-base text-gray-500">
-            Find the perfect item from our wide selection of products.
+            Explore The Dress Book’s collection of premium, active fashion products.
           </p>
         </div>
 
@@ -151,17 +153,15 @@ const ProductsPage: React.FC = () => {
                 ))
               ) : (
                 <p className="col-span-full text-center text-gray-500 py-10">
-                  No products match your criteria.
+                  No active products found in this category.
                 </p>
               )}
             </div>
           </main>
         </div>
       </div>
-      <QuickViewModal
-        product={quickViewProduct}
-        onClose={handleCloseQuickView}
-      />
+
+      <QuickViewModal product={quickViewProduct} onClose={handleCloseQuickView} />
     </div>
   );
 };

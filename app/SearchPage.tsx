@@ -77,7 +77,10 @@ const SearchPage: React.FC = () => {
       if (!res.ok) throw new Error('Failed to fetch products');
 
       const data = await res.json();
-      setProducts(data.products);
+      const activeProducts = data.products.filter(
+        (p: Product) => p.status?.toLowerCase() === "active" || "Active"
+      );
+      setProducts(activeProducts);
       setTotalPages(data.totalPages);
       setTotalCount(data.totalCount);
     } catch (err) {

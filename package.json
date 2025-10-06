@@ -16,8 +16,10 @@
     "cookie": "^1.0.2",
     "jsonwebtoken": "^9.0.2",
     "next": "^15.5.4",
+    "nodemailer": "^7.0.7",
     "react": "^19.1.1",
-    "react-dom": "^19.1.1"
+    "react-dom": "^19.1.1",
+    "resend": "^6.1.2"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",
