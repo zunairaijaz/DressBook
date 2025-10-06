@@ -9,8 +9,8 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
   title: {
-    default: "ShopSphere",
-    template: "%s | ShopSphere",
+    default: "The Dress Book",
+    template: "%s | The Dress Book",
   },
   description:
     "A modern, fully responsive e-commerce website designed to provide a seamless shopping experience.",

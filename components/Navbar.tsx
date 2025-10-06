@@ -106,12 +106,18 @@ const Navbar: React.FC = () => {
             </div>
 
             <Link href="/cart" className="relative text-white hover:text-gray-200 flex items-end gap-1 p-2 border border-transparent hover:border-white rounded">
-              <div className="relative">
-                <ShoppingCartIcon className="h-8 w-8" />
-                <span className="absolute -top-1 left-3.5 font-bold text-accent text-md">{cartCount}</span>
-              </div>
-              <span className="hidden lg:block font-bold text-sm mt-2">Cart</span>
-            </Link>
+  <div className="relative">
+    <ShoppingCartIcon className="h-8 w-8" />
+    {cartCount > 0 && (
+      <span className="absolute -top-2 -right-2 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-accent rounded-full">
+        {cartCount}
+      </span>
+    )}
+  </div>
+  <span className="hidden lg:block font-bold text-sm mt-2">Cart</span>
+</Link>
+
+
           </nav>
         </div>
       </div>

@@ -1,67 +1,75 @@
-import React from 'react';
-// FIX: Using namespace import to fix module resolution errors.
-import * as ReactRouterDOM from 'react-router-dom';
+"use client";
 
-const { Link } = ReactRouterDOM;
+import React from "react";
+import Link from "next/link";
+import { motion } from "framer-motion";
+import { categories } from "../data/filters";
 
-const FeatureSection: React.FC = () => {
-    const features = [
-        {
-            title: 'Timeless Design',
-            description: 'Our products are crafted with a focus on clean lines, natural materials, and lasting quality. Each piece is designed to be both beautiful and functional, complementing any modern space.',
-            imageUrl: 'https://i.imgur.com/mJ5zYg9.jpeg',
-            imageAlt: 'Well-designed living room with modern furniture',
-            align: 'left'
-        },
-        {
-            title: 'Sustainable Materials',
-            description: 'We are committed to sustainability. We source eco-friendly materials, partner with responsible manufacturers, and use packaging that minimizes our environmental impact.',
-            imageUrl: 'https://i.imgur.com/rS2dGpg.jpeg',
-            imageAlt: 'Close-up of sustainable wood grain',
-            align: 'right'
-        }
-    ];
+const FeaturedCollections: React.FC = () => {
+  const categoryImages: Record<string, string> = {
+    Jackets:
+    "https://images.pexels.com/photos/9634245/pexels-photo-9634245.jpeg?auto=compress&cs=tinysrgb&w=800", // jackets on rack
+    Pants:
+      "https://images.pexels.com/photos/7764611/pexels-photo-7764611.jpeg?auto=compress&cs=tinysrgb&w=800",
+    Shirts:
+    "https://images.pexels.com/photos/2112651/pexels-photo-2112651.jpeg?auto=compress&cs=tinysrgb&w=800",
+    Shoes:
+      "https://images.pexels.com/photos/19090/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=800", // sneakers
+    Accessories:
+      "https://images.pexels.com/photos/325527/pexels-photo-325527.jpeg?auto=compress&cs=tinysrgb&w=800",
+    Kurta:
+      "https://images.pexels.com/photos/31874438/pexels-photo-31874438.jpeg?auto=compress&cs=tinysrgb&w=800",
+    Trousers:
+      "https://images.pexels.com/photos/34158798/pexels-photo-34158798.jpeg?auto=compress&cs=tinysrgb&w=800",
+    Dresses:
+      "https://images.pexels.com/photos/34183001/pexels-photo-34183001.jpeg?auto=compress&cs=tinysrgb&w=800",
+    Tops:
+      "https://images.pexels.com/photos/6311605/pexels-photo-6311605.jpeg?auto=compress&cs=tinysrgb&w=800", // yellow sweater style
+  };
+  
+  return (
+    <section className="py-20 bg-gray-50">
+      <div className="max-w-7xl mx-auto px-6 text-center">
+        <h2 className="text-4xl font-extrabold tracking-tight text-gray-900 mb-6">
+          Shop by Category
+        </h2>
+        <p className="text-gray-600 max-w-2xl mx-auto mb-12">
+          Discover fashion for every occasion — from traditional wear to modern essentials.
+        </p>
 
-    return (
-        <section className="bg-white py-24 sm:py-32">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="mx-auto max-w-2xl lg:text-center">
-                    <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-                        Designed for the Modern Home
-                    </h2>
-                    <p className="mt-6 text-lg leading-8 text-gray-600">
-                        Discover the difference that quality craftsmanship and thoughtful design can make in your everyday life.
+        <div className="grid gap-8 grid-cols-3">
+        {categories.map((category, index) => (
+            <motion.div
+              key={index}
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: "spring", stiffness: 200 }}
+              className="group relative bg-white rounded-2xl shadow-md overflow-hidden cursor-pointer hover:shadow-xl transition-all duration-300"
+            >
+              <Link href={`/search?category=${encodeURIComponent(category)}`}>
+                <div className="relative h-72 w-full">
+                  <img
+                    src={categoryImages[category] || "/images/placeholder.jpg"}
+                    alt={category}
+                    className="object-cover w-full h-full transform group-hover:scale-110 transition-transform duration-700 ease-in-out"
+                  />
+                  <div className="absolute inset-0 bg-black bg-opacity-30 group-hover:bg-opacity-40 transition duration-500" />
+                  <div className="absolute bottom-0 p-6 text-left text-white">
+                    <h3 className="text-2xl font-semibold mb-2">{category}</h3>
+                    <p className="text-sm text-gray-200">
+                      Explore our latest {category.toLowerCase()} collection.
                     </p>
+                    <div className="mt-4 inline-block bg-white text-gray-900 font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition">
+                      Explore
+                    </div>
+                  </div>
                 </div>
-                <div className="mt-16 space-y-20 lg:space-y-24">
-                    {features.map((feature) => (
-                        <div 
-                            key={feature.title} 
-                            className={`grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-10 items-center ${feature.align === 'right' ? 'lg:grid-flow-col-dense' : ''}`}
-                        >
-                            <div className={`${feature.align === 'right' ? 'lg:col-start-2' : ''}`}>
-                                <h3 className="text-2xl font-bold tracking-tight text-gray-900">{feature.title}</h3>
-                                <p className="mt-4 text-gray-600">{feature.description}</p>
-                                <Link 
-                                    to="/search"
-                                    className="mt-6 inline-block text-accent font-semibold hover:text-accent-hover"
-                                >
-                                    Learn more <span aria-hidden="true">&rarr;</span>
-                                </Link>
-                            </div>
-                            <div className={`${feature.align === 'right' ? 'lg:col-start-1' : ''}`}>
-                                <img 
-                                    src={feature.imageUrl} 
-                                    alt={feature.imageAlt} 
-                                    className="rounded-lg bg-gray-100 shadow-md"
-                                />
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </section>
-    );
+              </Link>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
 };
 
-export default FeatureSection;
+export default FeaturedCollections;

@@ -88,9 +88,12 @@ model Order {
   total         Float
   customerName  String
   customerEmail String
+  address       String?      // NEW: Full address
+  country       String?      // NEW: Country for sales by location
   user          User        @relation(fields: [userId], references: [id])
   items         OrderItem[]
 }
+
 
 model OrderItem {
   id        String  @id @default(uuid())

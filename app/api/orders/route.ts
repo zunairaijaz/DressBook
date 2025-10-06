@@ -38,6 +38,8 @@ export async function POST(req: Request) {
         status: "pending",
         customerName: customer.name,
         customerEmail: customer.email,
+        address: customer.address, 
+        country: customer.country, 
         items: {
           create: items.map((item: any) => ({
             productId: item.productId,
@@ -46,8 +48,8 @@ export async function POST(req: Request) {
           })),
         },
       },
-      include: { items: true },
     });
+    
 
     // ✅ Create modern HTML email content
     const htmlContent = `

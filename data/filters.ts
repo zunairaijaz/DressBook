@@ -7,7 +7,7 @@ export const categories = [
   "Shoes",
   "Accessories",
   "Kurta",
-  "Shalwar Kameez",
+  "Trousers",
   "Dresses",
   "Tops",
 ];

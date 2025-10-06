@@ -17,13 +17,12 @@ interface CartItem {
   id: string;
   quantity: number;
   product: Product;
-  selectedVariant?: Record<string, string>; // optional
+  selectedVariant?: Record<string, string>;
 }
 
 const CheckoutPage: React.FC = () => {
   const { isAuthenticated, user } = useAuth();
-  const {  clearCart } = useCart();
-
+  const { clearCart } = useCart();
   const router = useRouter();
 
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
@@ -34,6 +33,7 @@ const CheckoutPage: React.FC = () => {
     firstName: "",
     lastName: "",
     address: "",
+    country: "",
     email: "",
   });
 
@@ -68,7 +68,7 @@ const CheckoutPage: React.FC = () => {
   };
 
   const handlePlaceOrder = async () => {
-    if (!formData.firstName || !formData.lastName || !formData.address || !formData.email) {
+    if (!formData.firstName || !formData.lastName || !formData.address || !formData.email || !formData.country) {
       alert("Please fill all required fields");
       return;
     }
@@ -80,6 +80,7 @@ const CheckoutPage: React.FC = () => {
         name: `${formData.firstName} ${formData.lastName}`,
         email: formData.email,
         address: formData.address,
+        country: formData.country, // ✅ Added country
       };
 
       const orderItems = cartItems.map(item => ({
@@ -87,28 +88,26 @@ const CheckoutPage: React.FC = () => {
         quantity: item.quantity,
         price: item.product.price,
         variant: item.selectedVariant || null,
-        product: { name: item.product.name, images: item.product.images }, 
+        product: { name: item.product.name, images: item.product.images },
       }));
 
-   const res = await fetch("/api/orders", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    items: orderItems,
-    totalPrice,
-    shipping: 5,
-    customer,
-    userId: user!.id, // using non-null assertion after check
-  }),
-});
-
+      const res = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          items: orderItems,
+          totalPrice,
+          shipping: 5,
+          customer,
+          userId: user!.id,
+        }),
+      });
 
       const data = await res.json();
       if (data.success) {
-  await clearCart(); 
-
+        await clearCart();
+        setCartItems([]);
         alert(`Order placed! Order ID: ${data.order?.id}`);
-        setCartItems([]); // clear cart
         router.push(`/order-confirmation/${data.order?.id}`);
       } else {
         alert(data.message || "Failed to place order");
@@ -153,56 +152,24 @@ const CheckoutPage: React.FC = () => {
                 <h2 className="text-lg font-medium text-gray-900">Shipping Information</h2>
                 <div className="mt-4 grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-4">
                   <div>
-                    <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
-                      First name
-                    </label>
-                    <input
-                      type="text"
-                      id="firstName"
-                      name="firstName"
-                      value={formData.firstName}
-                      onChange={handleInputChange}
-                      className="mt-2 block w-full rounded-md border border-gray-400 shadow-sm py-3 px-3 focus:border-accent focus:ring-accent sm:text-sm"
-                    />
+                    <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">First name</label>
+                    <input type="text" id="firstName" name="firstName" value={formData.firstName} onChange={handleInputChange} className="mt-2 block w-full rounded-md border border-gray-400 shadow-sm py-3 px-3 focus:border-accent focus:ring-accent sm:text-sm" />
                   </div>
                   <div>
-                    <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">
-                      Last name
-                    </label>
-                    <input
-                      type="text"
-                      id="lastName"
-                      name="lastName"
-                      value={formData.lastName}
-                      onChange={handleInputChange}
-                      className="mt-2 block w-full rounded-md border border-gray-400 shadow-sm py-3 px-3 focus:border-accent focus:ring-accent sm:text-sm"
-                    />
+                    <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">Last name</label>
+                    <input type="text" id="lastName" name="lastName" value={formData.lastName} onChange={handleInputChange} className="mt-2 block w-full rounded-md border border-gray-400 shadow-sm py-3 px-3 focus:border-accent focus:ring-accent sm:text-sm" />
                   </div>
                   <div className="sm:col-span-2">
-                    <label htmlFor="address" className="block text-sm font-medium text-gray-700">
-                      Address
-                    </label>
-                    <input
-                      type="text"
-                      id="address"
-                      name="address"
-                      value={formData.address}
-                      onChange={handleInputChange}
-                      className="mt-2 block w-full rounded-md border border-gray-400 shadow-sm py-3 px-3 focus:border-accent focus:ring-accent sm:text-sm"
-                    />
+                    <label htmlFor="address" className="block text-sm font-medium text-gray-700">Address</label>
+                    <input type="text" id="address" name="address" value={formData.address} onChange={handleInputChange} className="mt-2 block w-full rounded-md border border-gray-400 shadow-sm py-3 px-3 focus:border-accent focus:ring-accent sm:text-sm" />
                   </div>
                   <div className="sm:col-span-2">
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                      Email
-                    </label>
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      className="mt-2 block w-full rounded-md border border-gray-400 shadow-sm py-3 px-3 focus:border-accent focus:ring-accent sm:text-sm"
-                    />
+                    <label htmlFor="country" className="block text-sm font-medium text-gray-700">Country</label>
+                    <input type="text" id="country" name="country" value={formData.country} onChange={handleInputChange} className="mt-2 block w-full rounded-md border border-gray-400 shadow-sm py-3 px-3 focus:border-accent focus:ring-accent sm:text-sm" placeholder="e.g., USA" />
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
+                    <input type="email" id="email" name="email" value={formData.email} onChange={handleInputChange} className="mt-2 block w-full rounded-md border border-gray-400 shadow-sm py-3 px-3 focus:border-accent focus:ring-accent sm:text-sm" />
                   </div>
                 </div>
               </div>
@@ -212,14 +179,7 @@ const CheckoutPage: React.FC = () => {
                 <h2 className="text-lg font-medium text-gray-900">Payment Method</h2>
                 <div className="mt-4">
                   <label className="flex items-center space-x-3">
-                    <input
-                      type="radio"
-                      name="payment-method"
-                      value="cod"
-                      checked
-                      readOnly
-                      className="h-4 w-4 text-accent border-gray-400 focus:ring-accent"
-                    />
+                    <input type="radio" name="payment-method" value="cod" checked readOnly className="h-4 w-4 text-accent border-gray-400 focus:ring-accent" />
                     <span className="text-gray-700 font-medium">Cash on Delivery</span>
                   </label>
                   <p className="text-gray-500 text-sm mt-2">Pay with cash upon delivery.</p>
@@ -230,28 +190,17 @@ const CheckoutPage: React.FC = () => {
             {/* Order Summary */}
             <div className="mt-10 lg:mt-0">
               <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
-                <h3 className="text-lg font-medium text-gray-900 p-6 border-b border-gray-200">
-                  Order summary
-                </h3>
+                <h3 className="text-lg font-medium text-gray-900 p-6 border-b border-gray-200">Order summary</h3>
                 <div className="p-6">
                   <ul role="list" className="divide-y divide-gray-200">
                     {cartItems.map((item) => (
                       <li key={item.id} className="flex py-4">
                         <div className="flex space-x-2">
                           {(item.product.images || []).map((img, idx) => (
-                            <img
-                              key={idx}
-                              src={img}
-                              alt={`${item.product.name} image ${idx + 1}`}
-                              className="h-20 w-20 flex-none rounded-md object-cover object-center"
-                            />
+                            <img key={idx} src={img} alt={`${item.product.name} image ${idx + 1}`} className="h-20 w-20 flex-none rounded-md object-cover object-center" />
                           ))}
                           {(!item.product.images || item.product.images.length === 0) && (
-                            <img
-                              src="/placeholder.png"
-                              alt="No image available"
-                              className="h-20 w-20 flex-none rounded-md object-cover object-center"
-                            />
+                            <img src="/placeholder.png" alt="No image available" className="h-20 w-20 flex-none rounded-md object-cover object-center" />
                           )}
                         </div>
 
@@ -259,40 +208,22 @@ const CheckoutPage: React.FC = () => {
                           <h4 className="font-medium text-gray-900">{item.product.name}</h4>
                           <p className="text-gray-500">Qty: {item.quantity}</p>
                           {item.selectedVariant && (
-                            <p className="text-gray-500 text-sm">
-                              Variant: {Object.values(item.selectedVariant).join(" / ")}
-                            </p>
+                            <p className="text-gray-500 text-sm">Variant: {Object.values(item.selectedVariant).join(" / ")}</p>
                           )}
                         </div>
-                        <p className="flex-none font-medium text-gray-900">
-                          ${(item.product.price * item.quantity).toFixed(2)}
-                        </p>
+                        <p className="flex-none font-medium text-gray-900">${(item.product.price * item.quantity).toFixed(2)}</p>
                       </li>
                     ))}
                   </ul>
 
                   <dl className="space-y-4 mt-6 border-t border-gray-200 pt-6 text-sm font-medium text-gray-500">
-                    <div className="flex justify-between">
-                      <dt>Subtotal</dt>
-                      <dd className="text-gray-900">${totalPrice.toFixed(2)}</dd>
-                    </div>
-                    <div className="flex justify-between">
-                      <dt>Shipping</dt>
-                      <dd className="text-gray-900">$5.00</dd>
-                    </div>
-                    <div className="flex items-center justify-between border-t border-gray-200 pt-4 text-gray-900">
-                      <dt className="text-base">Order total</dt>
-                      <dd className="text-base">${(totalPrice + 5.0).toFixed(2)}</dd>
-                    </div>
+                    <div className="flex justify-between"><dt>Subtotal</dt><dd className="text-gray-900">${totalPrice.toFixed(2)}</dd></div>
+                    <div className="flex justify-between"><dt>Shipping</dt><dd className="text-gray-900">$5.00</dd></div>
+                    <div className="flex items-center justify-between border-t border-gray-200 pt-4 text-gray-900"><dt className="text-base">Order total</dt><dd className="text-base">${(totalPrice + 5.0).toFixed(2)}</dd></div>
                   </dl>
 
                   <div className="mt-6">
-                    <button
-                      type="button"
-                      onClick={handlePlaceOrder}
-                      disabled={placingOrder}
-                      className="w-full bg-accent border border-transparent rounded-md shadow-sm py-3 px-4 text-base font-medium text-white hover:bg-accent-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent"
-                    >
+                    <button type="button" onClick={handlePlaceOrder} disabled={placingOrder} className="w-full bg-accent border border-transparent rounded-md shadow-sm py-3 px-4 text-base font-medium text-white hover:bg-accent-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent">
                       {placingOrder ? "Placing Order..." : "Place Order"}
                     </button>
                   </div>
@@ -307,6 +238,3 @@ const CheckoutPage: React.FC = () => {
 };
 
 export default CheckoutPage;
-
-
-
